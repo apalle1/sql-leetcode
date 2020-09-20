@@ -1,0 +1,32 @@
+/* Write your T-SQL query statement below */
+
+-- with base_table as (
+--     select customer_id, sum(case when product_name in ('A', 'B') then 1 else 0 end) as x,
+--                         sum(case when product_name in ('C') then 1 else 0 end) as y
+--     from orders 
+--     group by customer_id)
+    
+-- select base_table.customer_id, customer_name 
+-- from base_table left join customers on base_table.customer_id = customers.customer_id
+-- where x = 2 and y = 0
+
+
+select distinct customer_id, customer_name
+from customers
+where customer_id in
+(
+    select customer_id
+    from orders
+    where product_name='A'
+) and customer_id in
+(
+    select customer_id
+    from orders
+    where product_name='B'
+) and customer_id not in
+(
+    select customer_id
+    from orders
+    where product_name='C'
+) 
+order by customer_id

@@ -1,0 +1,8 @@
+/* Write your T-SQL query statement below */
+
+select distinct title
+from tvprogram a left join content b on a.content_id = b.content_id
+where kids_content = 'Y' and content_type = 'Movies' and month(program_date) = 6
+
+
+    

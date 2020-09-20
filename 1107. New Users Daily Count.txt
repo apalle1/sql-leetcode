@@ -1,0 +1,31 @@
+/* Write your T-SQL query statement below */
+
+with cte as (
+
+    select user_id, min(activity_date) as login_date
+    from traffic
+    where activity = 'login'
+    group by user_id
+    having min(activity_date) >= dateadd(day, -90, '2019-06-30')
+)
+
+select login_date, count(login_date) as user_count
+from cte
+group by login_date
+
+/*
+select login_date, count(login_date) as user_count
+from
+(
+select first_time as login_date
+from
+(
+select user_id, min(activity_date) as first_time
+from traffic
+where activity = 'login'
+group by user_id
+) as T
+where first_time >= dateadd(day, -90, '2019-06-30')
+) as U
+group by login_date
+*/

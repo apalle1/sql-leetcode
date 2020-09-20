@@ -1,0 +1,24 @@
+/* Write your T-SQL query statement below */
+
+-- with base_table as (
+--     select *, avg(occurences) over(partition by event_type) as avg_occurences 
+--     from events
+-- ),
+-- second_table as (
+--     select *, (case when occurences > avg_occurences then 1 else 0 end) as active_count
+--     from base_table
+-- )
+
+-- select business_id 
+-- from second_table
+-- group by business_id 
+-- having sum(active_count) > 1
+
+select business_id
+from(
+        select *, avg(occurences) over(partition by event_type) as avg_occurences
+        from events
+    ) A
+where occurences > avg_occurences
+group by business_id 
+having count(*) > 1

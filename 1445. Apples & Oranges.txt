@@ -1,0 +1,18 @@
+/* Write your T-SQL query statement below */
+
+-- with apples as (
+--     select sale_date, sold_num as sold_apples
+--     from sales
+--     where fruit = 'apples'
+-- ), oranges as (
+--     select sale_date, sold_num as sold_oranges
+--     from sales
+--     where fruit = 'oranges'
+-- )
+
+-- select a.sale_date, (sold_apples - sold_oranges) as diff
+-- from apples a left join oranges o on a.sale_date = o.sale_date 
+
+select sale_date, sum(case when fruit='apples' then sold_num else -sold_num end) as diff
+from sales
+group by sale_date

@@ -1,0 +1,19 @@
+/* Write your T-SQL query statement below */
+
+with order_info as (
+    select *, rank() over(partition by seller_id order by seller_id, order_date) as ranking 
+    from orders
+)
+, rank_info as (
+    select *
+    from order_info
+    where ranking = 2
+)
+, merge_info as (
+    select user_id, seller_id, favorite_brand, item_brand
+    from users left join rank_info on rank_info.seller_id = users.user_id
+               left join items on rank_info.item_id = items.item_id
+)
+
+select user_id as seller_id, (case when favorite_brand = item_brand then 'yes' else 'no' end) as '2nd_item_fav_brand'
+from merge_info

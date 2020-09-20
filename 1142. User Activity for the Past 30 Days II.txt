@@ -1,0 +1,10 @@
+/* Write your T-SQL query statement below */
+
+-- The average will have the same data type as the values, so cast the values:
+
+select isnull(round(avg(cast(x as float)), 2), 0.00) as average_sessions_per_user 
+from(
+    select user_id, count(distinct session_id) as x
+    from activity
+    where activity_date > '2019-06-27' and activity_date < '2019-07-28'
+    group by user_id) M

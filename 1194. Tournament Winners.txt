@@ -1,0 +1,24 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select player_id, group_id, isnull(first_score, 0)  as score
+    from players left join matches on players.player_id = matches.first_player
+    union all
+    select player_id, group_id, isnull(second_score, 0)  as score
+    from players left join matches on players.player_id = matches.second_player 
+),
+second_table as (
+    select player_id, group_id, sum(score) as total_score
+    from base_table
+    group by player_id, group_id
+),
+third_table as (
+    select *, rank() over(partition by group_id order by total_score desc, player_id) as ranking
+    from second_table
+)
+
+select group_id, player_id   
+from third_table 
+where ranking = 1 
+
+    

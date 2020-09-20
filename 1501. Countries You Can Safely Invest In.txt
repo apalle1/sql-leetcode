@@ -1,0 +1,25 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select id, country.name
+    from ( select *, left(phone_number, 3) as country_code
+           from person ) A 
+    left join country on A.country_code = country.country_code
+), union_table as (
+    select name, duration 
+    from calls left join base_table on calls.caller_id = base_table.id
+    union all
+    select name, duration 
+    from calls left join base_table on calls.callee_id = base_table.id
+), avg_info as (
+   select name, avg(cast(duration as float)) as avg_duration
+   from union_table
+   group by name
+)
+
+select name as country
+from avg_info
+where avg_duration > (select avg(cast(duration as float)) from union_table)
+
+
+    

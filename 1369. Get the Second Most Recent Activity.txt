@@ -1,0 +1,20 @@
+/* Write your T-SQL query statement below */
+
+-- select username, activity, startDate, endDate
+-- from
+-- (select *, rank() over(partition by username order by startdate desc) as ranking 
+-- from useractivity) A
+-- where ranking = 2
+
+-- union
+
+-- select username, min(activity), min(startDate), min(endDate)
+-- from useractivity
+-- group by username 
+-- having count(*) = 1
+
+select username, activity, startDate, endDate 
+from  (select *, count(*) over(partition by username) as cnt,
+              rank() over(partition by username order by startdate desc) as ranking 
+       from useractivity) A
+where ranking = 2 or cnt < 2 

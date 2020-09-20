@@ -1,0 +1,19 @@
+/* Write your T-SQL query statement below */
+
+select project_id, employee_id
+from
+(
+select project_id, P.employee_id, rank() over(partition by project_id order by experience_years desc) as rank_num
+from project P left join employee E on P.employee_id = E.employee_id
+) as T
+where rank_num = 1
+
+/*
+with base_table as (
+select a.project_id, a.employee_id, b.experience_years, rank() over (partition by a.project_id order by b.experience_years DESC) as ranking
+from project a join employee b on a.employee_id = b.employee_id
+)
+select project_id, employee_id
+from base_table 
+where ranking = 1
+*/

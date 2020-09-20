@@ -1,0 +1,12 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select ad_id, sum(case when action = 'Clicked' then 1 else 0 end) as clicked,
+                  sum(case when action = 'Viewed' then 1 else 0 end) as viewed
+    from ads
+    group by ad_id 
+)
+
+select ad_id, (case when clicked = 0 and viewed = 0 then 0 else round((clicked*100.00/(clicked + viewed)),2) end) as ctr
+from base_table
+order by ctr desc, ad_id 

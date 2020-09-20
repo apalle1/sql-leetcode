@@ -1,0 +1,27 @@
+/* Write your T-SQL query statement below */
+
+with summary_info1 as (
+    select session_id, (case when duration*1.00/60 >= 0 and duration*1.00/60 < 5 then '[0-5>'
+                             when duration*1.00/60 >= 5 and duration*1.00/60 < 10 then '[5-10>'
+                             when duration*1.00/60 >= 10 and duration*1.00/60 < 15 then '[10-15>'
+                             when duration*1.00/60 >= 15 then '15 or more'
+                             end) as bin
+    from sessions
+), summary_info2 as (
+    select bin, count(*) as category_count
+    from summary_info1
+    group by bin
+), result as (
+            select '[0-5>' as bin
+            union
+            select '[5-10>' as bin
+            union
+            select '[10-15>' as bin
+            union
+            select '15 or more' as bin
+)
+
+select result.bin, isnull(category_count, 0) as total
+from result left join summary_info2 on result.bin = summary_info2.bin
+
+    

@@ -1,0 +1,23 @@
+# Write your MySQL query statement below
+
+select name as results
+from 
+(select Users.name, count(movie_id) as movie_count
+from Movie_Rating
+left join Users 
+on Movie_Rating.user_id=Users.user_id
+group by Movie_Rating.user_id
+order by movie_count desc, name
+limit 1) a
+union
+select movie_name as results
+from 
+(
+SELECT Movies.title as movie_name, avg(Movie_rating.rating) as grade 
+from Movie_rating
+left join Movies
+on Movie_rating.movie_id=Movies.movie_id
+where SUBSTR(Movie_rating.created_at,1,7)="2020-02"
+group by Movie_rating.movie_id
+order by grade desc, movie_name
+limit 1) b

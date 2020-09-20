@@ -1,0 +1,10 @@
+/* Write your T-SQL query statement below */
+
+with cte as
+(
+select Id, Month, Sum(Salary) Over(Partition by Id Order by Month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) as X, row_number() Over(Partition by Id Order by Month desc) as row_num
+from Employee 
+)
+select Id, Month, X as Salary
+from cte
+where row_num > 1

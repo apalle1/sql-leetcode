@@ -1,0 +1,13 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select activity, count(*) as activity_count 
+    from friends
+    group by activity
+)
+
+select activity
+from base_table
+where (activity_count > (select min(activity_count) from base_table))
+      and 
+      (activity_count < (select max(activity_count) from base_table)) 

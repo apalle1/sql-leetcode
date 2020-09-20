@@ -1,0 +1,29 @@
+/* Write your T-SQL query statement below */
+
+select product_id, year as first_year, quantity, price
+from
+(
+select *, rank() over(partition by product_id order by year) as year_rnk
+from sales
+) as tbl
+where year_rnk = 1
+
+/*
+with cte as (
+    select *, rank() over(partition by product_id order by year ASC) as row_num
+    from sales 
+)
+
+select product_id, year as first_year, quantity, price
+from cte
+where row_num = 1
+*/
+
+/*
+select product_id, year AS first_year, quantity, price
+from Sales
+where (product_id, year) in (
+select product_id, min(year) as year
+from Sales
+group by product_id)
+*/

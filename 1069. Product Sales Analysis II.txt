@@ -1,0 +1,15 @@
+/* Write your T-SQL query statement below */
+
+select product_id, sum(quantity) as total_quantity
+from sales
+group by product_id
+order by product_id asc
+
+
+/*
+To report the non-sold product(s) as 0.
+
+select P.product_id, ISNULL(sum(S.quantity),0) AS total_quantity
+from product P left join sales S on P.product_id = S.product_id
+group by P.product_id
+*/

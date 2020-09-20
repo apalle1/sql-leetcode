@@ -1,0 +1,23 @@
+/* Write your T-SQL query statement below */
+
+with starting_table as (
+    select a.*,
+           b.banned as client_banned,
+           -- b.role as client_role,
+           c.banned as driver_banned
+           -- c.role as driver_role
+    from trips a 
+    join users b on a.client_id = b.users_id
+    join users c on a.driver_id = c.users_id
+),
+second_table as (
+    select *
+    from starting_table
+    where client_banned = 'No' and driver_banned = 'No'
+    and request_at >= '2013-10-01' and request_at <='2013-10-03'
+)
+select request_at as Day,
+       CAST(ROUND(sum(case when status<>'completed' then 1 else 0 end)*1.00/ count(request_at),2) as NUMERIC(12,2)) as 'Cancellation Rate'
+from second_table
+group by request_at
+order by request_at

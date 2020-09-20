@@ -1,0 +1,7 @@
+/* Write your T-SQL query statement below */
+
+select S.buyer_id
+from sales S left join product P on S.product_id = P.product_id
+group by S.buyer_id
+having sum(case when product_name = 'S8' then 1 else 0 end) > 0 
+    and sum(case when product_name = 'iPhone' then 1 else 0 end) = 0

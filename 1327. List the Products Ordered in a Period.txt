@@ -1,0 +1,9 @@
+/* Write your T-SQL query statement below */
+
+select product_name, total_units as unit
+from (select product_id, sum(unit) as total_units
+      from orders
+      where month(order_date) = 2
+      group by product_id
+      having sum(unit) >= 100) A join products on A.product_id = products.product_id
+    

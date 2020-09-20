@@ -1,0 +1,15 @@
+/* Write your T-SQL query statement below */
+
+-- log_id, num, difference
+-- 1, 1, 0
+-- 2, 2, 0
+-- 3, 3, 0
+-- 7, 4, 3
+-- 8, 5, 3
+-- 10, 6, 4
+
+select min(log_id) as start_id, max(log_id) as end_id
+from 
+    (select log_id, row_number() over(order by log_id) as num
+    from logs) A
+group by (log_id - num)

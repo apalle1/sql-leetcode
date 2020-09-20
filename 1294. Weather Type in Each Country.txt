@@ -1,0 +1,13 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select country_name, avg(cast(weather_state as float)) as avg_weather
+    from countries left join weather on countries.country_id = weather.country_id
+    where month(day) = 11
+    group by country_name 
+)
+
+select country_name, (case when avg_weather <= 15 then 'Cold' 
+                           when avg_weather >= 25 then 'Hot' 
+                           else 'Warm' end) as weather_type
+from base_table

@@ -1,0 +1,8 @@
+/* Write your T-SQL query statement below */
+
+select employee as employee_id 
+from (
+    select e1.employee_id as employee, e1.manager_id as manager1, e2.manager_id as manager2, e3.manager_id as manager3
+    from employees e1 left join employees e2 on e1.manager_id = e2.employee_id
+                      left join employees e3 on e2.manager_id = e3.employee_id ) M
+where employee <> 1 and (manager1 = 1 or manager2 = 1 or manager3 = 1)

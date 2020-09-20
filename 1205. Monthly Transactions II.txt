@@ -1,0 +1,23 @@
+/* Write your T-SQL query statement below */
+
+with chargeback_table as (
+    select c.trans_id as id, country, 'chargeback' as state, amount, c.trans_date   
+    from chargebacks c left join transactions t on c.trans_id = t.id
+), union_table as (
+    select *, left(trans_date, 7) as month
+    from transactions
+    union all
+    select *, left(trans_date, 7) as month
+    from chargeback_table
+), final_table as (
+select month, country, sum(case when state='approved' then 1 else 0 end) as approved_count,
+                       sum(case when state='approved' then amount else 0 end) as approved_amount,
+                       sum(case when state='chargeback' then 1 else 0 end) as chargeback_count,
+                       sum(case when state='chargeback' then amount else 0 end) as chargeback_amount
+from union_table
+group by month, country
+)
+
+select *
+from final_table
+where approved_count!=0 OR approved_amount!=0 OR chargeback_count!=0 OR chargeback_amount!=0

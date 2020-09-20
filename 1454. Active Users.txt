@@ -1,0 +1,15 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select id,
+           login_date,
+           lead(login_date,4) over(partition by id order by login_date ASC) as day_4,
+           dateadd(day, 4, login_date) as date_add_4
+    from 
+    (select distinct id, login_date from logins) as A
+)
+
+select distinct a.id, b.name
+from base_table a join accounts b on a.id = b.id
+where day_4 = date_add_4
+order by a.id 

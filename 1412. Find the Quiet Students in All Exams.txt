@@ -1,0 +1,12 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+    select *, rank() over(partition by exam_id order by score desc) as rank1,
+              rank() over(partition by exam_id order by score) as rank2
+    from exam
+)
+
+select distinct e.student_id, s.student_name
+from exam e left join student s on s.student_id = e.student_id
+where e.student_id not in (select student_id from base_table where rank1 = 1 or rank2 = 1)
+

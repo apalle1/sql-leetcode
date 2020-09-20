@@ -1,0 +1,11 @@
+/* Write your T-SQL query statement below */
+
+with base_table as (
+select a.*,
+       b.salary as manager_salary
+from employee as a
+join employee as b on a.managerid = b.id
+)
+select Name as employee 
+from base_table
+where salary > manager_salary

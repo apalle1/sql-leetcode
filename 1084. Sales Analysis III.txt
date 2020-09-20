@@ -1,0 +1,24 @@
+/* Write your T-SQL query statement below */
+
+select product_id, product_name
+from product
+where product_id in 
+(select product_id from sales where sale_date >= '2019-01-01' and sale_date <= '2019-03-31') 
+and product_id not in 
+(select product_id from sales where sale_date < '2019-01-01' or sale_date > '2019-03-31')
+                                                                                                                           
+/*
+with cte as (
+    select product_id, sale_date, 
+           case when sale_date between '2019-01-01' and '2019-03-31' then 'Spring' else 'No Spring' end as season
+    from sales
+)
+
+select T.product_id, product_name
+from (select product_id
+      from cte
+      group by product_id
+      having sum(case when season = 'Spring' then 1 else 0 end) > 0 
+        and sum(case when season = 'No Spring' then 1 else 0 end) = 0) T 
+left join product on T.product_id = product.product_id
+*/
