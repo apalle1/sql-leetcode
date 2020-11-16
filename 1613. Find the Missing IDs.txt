@@ -1,0 +1,27 @@
+/* Write your T-SQL query statement below */
+-- https://www.essentialsql.com/recursive-ctes-explained/
+-- https://www.sqlservertutorial.net/sql-server-basics/sql-server-recursive-cte/
+
+-- Example 1
+-- with cte as (
+--     select 1 as n -- anchor member
+--     union all   
+--     select n + 1 -- recursive member
+--     from cte
+--     where n < 20
+-- )
+
+-- select n
+-- from cte
+
+-- Example 2
+-- with cte as (
+--     select 0 as n, datename(weekday, 0) as wd -- anchor member
+--     union all
+--     select n + 1 as n, datename(weekday, n + 1) as wd -- recursive member
+--     from cte
+--     where n < 6
+-- )
+
+-- select n, wd
+-- from cte
