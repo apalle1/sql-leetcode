@@ -1,0 +1,25 @@
+/* Write your T-SQL query statement below */
+
+with cte1 as (
+    select 'failed' as period_state, fail_date as date
+    from failed
+    where year(fail_date) = 2019
+    union all
+    select 'succeeded' as period_state, success_date as date
+    from succeeded
+    where year(success_date) = 2019
+), cte2 as (
+    select *, lag(period_state, 1) over(order by date) as lagged_state 
+    from cte1
+), cte3 as (
+    select *, (case when period_state = lagged_state then 0 else 1 end) as marker
+    from cte2
+), cte4 as (
+    select *, sum(marker) over(order by date) as rolling_sum
+    from cte3
+)
+
+select max(period_state) as period_state, min(date) as start_date, max(date) as end_Date
+from cte4 
+group by rolling_sum
+
