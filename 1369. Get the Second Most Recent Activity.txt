@@ -1,16 +1,19 @@
 /* Write your T-SQL query statement below */
 
--- select username, activity, startDate, endDate
--- from
--- (select *, rank() over(partition by username order by startdate desc) as ranking 
--- from useractivity) A
--- where ranking = 2
+-- with base_table as (
+--     select *, row_number() over(partition by username order by enddate desc) as RowNumber
+--     from useractivity
+-- ) 
+    
+-- select username, activity, startDate, endDate 
+-- from base_table
+-- where RowNumber = 2
 
--- union
+-- union all
 
--- select username, min(activity), min(startDate), min(endDate)
--- from useractivity
--- group by username 
+-- select username, activity, startDate, endDate 
+-- from base_table
+-- group by username
 -- having count(*) = 1
 
 select username, activity, startDate, endDate 
