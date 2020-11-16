@@ -8,7 +8,7 @@
 --     union all   
 --     select n + 1 -- recursive member
 --     from cte
---     where n < 20
+--     where n < 100
 -- )
 
 -- select n
@@ -25,3 +25,21 @@
 
 -- select n, wd
 -- from cte
+
+-- declare @max_customers as int
+-- set @max_customers = 
+
+with cte1 as (
+    select max(customer_id) as max_id
+    from customers
+), cte2 as (
+    select 1 as ids -- anchor member
+    union all   
+    select ids + 1 -- recursive member
+    from cte2
+    where ids < (select max_id from cte1)
+)
+
+select ids
+from cte2
+where ids not in (select customer_id from customers)
