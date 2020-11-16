@@ -1,3 +1,5 @@
+/* Write your T-SQL query statement below */
+
 with cte1 as (
     select v.user_id, visit_date, transaction_date, amount
     from visits v left join transactions t on v.user_id = t.user_id and v.visit_date = t.transaction_date
