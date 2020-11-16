@@ -1,5 +1,16 @@
 /* Write your T-SQL query statement below */
 
+-- with cte as (
+--     select *, lag(recorddate,1) over(order by recorddate) as lagged_date,
+--               lag(temperature,1) over(order by recorddate) as lagged_temp
+--     from weather
+-- )
+
+-- select id
+-- from cte
+-- where datediff(day, lagged_date, recorddate) = 1 and temperature > lagged_temp
+
 select w2.id
-from weather w1, weather w2
-where datediff(day,w1.recorddate,w2.recorddate) = 1 and w1.temperature < w2.temperature
+from weather w1 join weather w2
+on datediff(day, w1.recorddate, w2.recorddate) = 1 and w1.temperature < w2.temperature
+
