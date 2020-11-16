@@ -26,9 +26,6 @@
 -- select n, wd
 -- from cte
 
--- declare @max_customers as int
--- set @max_customers = 
-
 with cte1 as (
     select max(customer_id) as max_id
     from customers
