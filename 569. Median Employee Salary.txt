@@ -1,0 +1,30 @@
+/* Write your T-SQL query statement below */
+
+-- with cte1 as (
+--     select *, row_number() over(partition by company order by salary) as rn
+--     from employee
+-- ), cte2 as (
+--     select *, avg(1.00*rn) over(partition by company) as mean
+--     from cte1
+-- )
+
+-- select id, company, salary
+-- from cte2
+-- where floor(mean) = rn or ceiling(mean) = rn
+
+with cte1 as (
+    select *, row_number() over(partition by company order by salary) as rn,
+              count(*) over(partition by company) as cnt
+    from employee
+), cte2 as (
+    select *, case when cnt%2=0 and rn=cnt/2 then 1
+                   when cnt%2=0 and rn=cnt/2+1 then 1
+                   when cnt%2<>0 and rn=cnt/2+1 then 1 else 0 end as median_marker
+    from cte1
+)
+
+select id, company, salary
+from cte2
+where median_marker = 1
+
+
