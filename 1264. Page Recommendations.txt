@@ -1,0 +1,34 @@
+/* Write your T-SQL query statement below */
+
+-- with base_table as (
+--     select user2_id as friend
+--     from friendship 
+--     where user1_id = 1
+--     union all
+--     select user1_id as friend
+--     from friendship
+--     where user2_id = 1
+-- ), recommend as (
+--     select page_id
+--     from base_table left join likes on base_table.friend = likes.user_id
+-- )
+
+-- select distinct page_id as recommended_page
+-- from recommend 
+-- where page_id not in (select page_id from likes where user_id=1)
+
+
+with base_table as (
+    select user2_id as friend
+    from friendship 
+    where user1_id = 1
+    union all
+    select user1_id as friend
+    from friendship
+    where user2_id = 1
+)
+
+select distinct page_id as recommended_page
+from likes 
+where user_id in (select * from base_table) and page_id not in (select page_id from likes where user_id=1)
+
