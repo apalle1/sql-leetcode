@@ -1,0 +1,17 @@
+/* Write your T-SQL query statement below */
+
+with cte1 as (
+    select user_id, user_name, credit, amount, 'out' as situation
+    from users left join transactions on users.user_id = transactions.paid_by 
+    union all
+    select user_id, user_name, credit, amount, 'in' as situation
+    from users left join transactions on users.user_id = transactions.paid_to
+), cte2 as (
+    select user_id, user_name, avg(credit) + isnull(sum(case when situation='out' then -1*amount else amount end),0) as credit
+    from cte1
+    group by user_id, user_name
+)
+
+select *, case when credit<0 then 'Yes' else 'No' end as credit_limit_breached
+from cte2
+
