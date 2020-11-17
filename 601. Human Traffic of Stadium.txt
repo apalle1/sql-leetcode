@@ -1,0 +1,45 @@
+/* Write your T-SQL query statement below */
+
+-- Solution 1 
+-- with cte1 as (
+--     select *, lead(people,1) over(order by id) as next,
+--               lag(people,1) over(order by id) as previous
+--     from stadium
+-- ), cte2 as (
+--     select id
+--     from cte1
+--     where people >= 100 and next >= 100 and previous >= 100
+-- )
+
+-- select distinct stadium.id, visit_date, people
+-- from stadium join cte2 on stadium.id = cte2.id or stadium.id = cte2.id-1 or stadium.id = cte2.id+1
+
+-- Solution 2
+-- with cte1 as (
+--     select *, lead(people,1) over(order by id) as next1,
+--               lead(people,2) over(order by id) as next2,
+--               lag(people,1) over(order by id) as previous1,
+--               lag(people,2) over(order by id) as previous2
+--     from stadium 
+-- )
+
+-- select id, visit_date, people
+-- from cte1
+-- where  (people >= 100 and next1 >= 100 and next2>= 100) or 
+--        (people >= 100 and previous1 >= 100 and next1>= 100) or 
+--        (people >= 100 and previous1 >= 100 and previous2>= 100)
+
+
+-- Solution 3
+-- 5,6,7
+-- 6,5,7
+-- 7,6,5
+
+select distinct s1.id, s1.visit_date, s1.people
+from stadium s1, stadium s2, stadium s3
+where (s1.people >= 100 and s2.people >= 100 and s3.people>= 100) and
+      ( 
+          (s1.id + 1 = s2.id and s1.id + 2 = s3.id and s2.id + 1 = s3.id) or 
+          (s1.id - 1 = s2.id and s1.id + 1 = s3.id and s2.id + 2 = s3.id) or 
+          (s1.id - 1 = s2.id and s1.id - 2 = s3.id and s2.id - 1 = s3.id)
+      )
