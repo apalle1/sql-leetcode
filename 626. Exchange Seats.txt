@@ -1,0 +1,18 @@
+/* Write your T-SQL query statement below */
+
+-- with cte as (
+--     select s1.id as s1_id, s1.student as s1_student, s2.student as s2_student, s3.student as s3_student
+--     from seat s1 left join seat s2 on s1.id+1 = s2.id left join seat s3 on s1.id-1 = s3.id
+-- )
+
+-- select s1_id as id, case when s1_id%2<>0 and s2_student is not null then s2_student
+--                          when s1_id%2=0 and s3_student is not null then s3_student
+--                          when s1_id%2<>0 and s2_student is null then s1_student end as student
+-- from cte
+
+select case when id%2 <> 0 and id != (select max(id) from seat) then id+1
+            when id%2 = 0 then id-1 else id 
+       end as id, 
+       student
+from seat
+order by id
