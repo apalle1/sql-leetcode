@@ -1,0 +1,26 @@
+/* Write your T-SQL query statement below */
+
+-- with cte1 as (
+--     select *, lead(free,1) over(order by seat_id) as leading
+--     from cinema
+-- ), cte2 as (
+--     select seat_id
+--     from cte1 
+--     where free = 1 and leading = 1
+-- )
+
+-- select distinct cinema.seat_id
+-- from cinema join cte2 on cinema.seat_id = cte2.seat_id or cinema.seat_id = cte2.seat_id+1
+
+
+SELECT
+    seat_id
+FROM
+    (SELECT
+        seat_id,
+        free,
+        LAG(free,1) OVER (ORDER BY seat_id) as free_lag,
+        LEAD(free,1) OVER (ORDER BY seat_id) as free_lead
+    FROM cinema ) as t
+WHERE (free=1 AND free_lag=1)
+OR (free=1 AND free_lead=1)
