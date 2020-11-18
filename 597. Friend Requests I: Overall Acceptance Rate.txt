@@ -1,0 +1,12 @@
+/* Write your T-SQL query statement below */
+
+with cte1 as (
+    select count(*) as num_of_requests 
+    from (select distinct sender_id, send_to_id from friend_request) t1
+), cte2 as (
+    select count(*) as num_of_accepted 
+    from (select distinct requester_id, accepter_id from request_accepted) t2
+)
+
+select case when num_of_requests = 0 then 0 else round(num_of_accepted*1.00/num_of_requests,2) end as accept_rate
+from cte1, cte2
