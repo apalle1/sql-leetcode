@@ -18,22 +18,14 @@ with cte1 as (
     select cte1.month as month, isnull(drivers,0) as drivers
     from cte1 left join cte3 on cte1.month = cte3.month
 ), cte5 as (
+    select month, sum(drivers) over(order by month) as active_drivers
+    from cte4
+), cte6 as (
     select month(requested_at) as month, count(acceptedrides.ride_id) as accepted_rides
     from acceptedrides left join rides on acceptedrides.ride_id = rides.ride_id
     where year(requested_at) = 2020
     group by month(requested_at)
-), cte6 as (
-    select cte4.month as month, drivers, isnull(accepted_rides,0) as accepted_rides
-    from cte4 left join cte5 on cte4.month = cte5.month
 )
 
-select month, sum(drivers) over(order by month) as active_drivers, accepted_rides
-from cte6
-
-
-
-
-
-
-
-
+select cte5.month as month, active_drivers, isnull(accepted_rides,0) as accepted_rides
+from cte5 left join cte6 on cte5.month = cte6.month
