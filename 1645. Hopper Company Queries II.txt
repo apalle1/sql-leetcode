@@ -1,0 +1,34 @@
+/* Write your T-SQL query statement below */
+
+with cte1 as (
+    select 1 as month 
+    union all
+    select month + 1 as month
+    from cte1 
+    where month < 12
+), cte2 as (
+    select driver_id, (case when year(join_date) = 2019 then '1' else month(join_date) end) as month
+    from drivers 
+    where year(join_date) <= 2020
+), cte3 as (
+    select month, count(driver_id) as drivers 
+    from cte2 
+    group by month
+), cte4 as (
+    select cte1.month as month, isnull(drivers,0) as drivers
+    from cte1 left join cte3 on cte1.month = cte3.month
+), cte5 as (
+    select month, sum(drivers) over(order by month) as available_drivers
+    from cte4 
+), cte6 as (
+    select month(requested_at) as month, count(distinct driver_id) as accepted_drivers
+    from acceptedrides left join rides on acceptedrides.ride_id = rides.ride_id
+    where year(requested_at) = 2020
+    group by month(requested_at)
+), cte7 as (
+    select cte5.month as month, available_drivers, isnull(accepted_drivers,0) as accepted_drivers
+    from cte5 left join cte6 on cte5.month = cte6.month
+)
+
+select month, case when available_drivers=0 then 0 else round(accepted_drivers*100.00/available_drivers,2) end as working_percentage 
+from cte7
