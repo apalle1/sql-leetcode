@@ -1,0 +1,22 @@
+/* Write your T-SQL query statement below */
+
+with cte1 as (
+    select 1 as month 
+    union all
+    select month + 1 as month
+    from cte1 
+    where month < 12
+), cte2 as (
+    select month(requested_at) as month, sum(ride_distance) as total_ride_distance, sum(ride_duration) as total_ride_duration
+    from acceptedrides left join rides on acceptedrides.ride_id = rides.ride_id
+    where year(requested_at) = 2020
+    group by month(requested_at)
+), cte3 as (
+    select cte1.month as month, isnull(total_ride_distance,0) as total_ride_distance, isnull(total_ride_duration,0) as total_ride_duration
+    from cte1 left join cte2 on cte1.month = cte2.month
+)
+
+select top 10 month, 
+       cast(round(avg(total_ride_distance*1.00) over(order by month rows between current row and 2 following),2) as decimal(7,2)) as average_ride_distance, 
+       cast(round(avg(total_ride_duration*1.00) over(order by month rows between current row and 2 following), 2) as decimal(7,2)) as average_ride_duration 
+from cte3
